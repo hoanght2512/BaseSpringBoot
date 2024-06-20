@@ -35,7 +35,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public MessageResponse register(RegisterRequest request) {
-        checkIfUserExists(request.getUsername(), request.getEmail());
+        if (userRepository.existsByUsername(request.getUsername()))
+            throw new BadRequestException("USERNAME_ALREADY_EXISTS");
 
         User user = createUser(request);
         userRepository.save(user);
@@ -76,13 +77,8 @@ public class AuthServiceImpl implements AuthService {
         return new MessageResponse("Logout successfully", 200);
     }
 
-    private void checkIfUserExists(String username, String email) {
-        if (userRepository.existsByUsername(username)) throw new BadRequestException("USERNAME_ALREADY_EXISTS");
-        if (userRepository.existsByEmail(email)) throw new BadRequestException("EMAIL_ALREADY_EXISTS");
-    }
-
     private User createUser(RegisterRequest request) {
-        return User.builder().username(request.getUsername()).email(request.getEmail()).password(
+        return User.builder().username(request.getUsername()).password(
                 bCryptPasswordEncoder.encode(request.getPassword())).build();
     }
 

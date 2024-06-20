@@ -28,9 +28,6 @@ public class User {
     @Column(name = "fullname")
     private String fullname;
 
-    @Column(name = "email")
-    private String email;
-
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles = new HashSet<>();
